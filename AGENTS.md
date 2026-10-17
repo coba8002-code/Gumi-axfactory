@@ -27,3 +27,4 @@ Build a production-oriented factory tablet + IoT + knowledge capture platform fo
 
 ## Acceptance criteria (MVP)
 A worker can select equipment, record downtime reason and corrective action, supervisor can approve a case, and admin can see per-factory reports. Data survives restart and is isolated by tenant. Sensor events can be ingested idempotently; reports distinguish measured from estimated values.
+

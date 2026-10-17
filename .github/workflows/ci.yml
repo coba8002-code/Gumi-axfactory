@@ -1,0 +1,31 @@
+name: factory-ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: factory_test
+          POSTGRES_USER: factory
+          POSTGRES_PASSWORD: test-only-ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U factory -d factory_test"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      DATABASE_URL: postgresql://factory:test-only-ci@localhost:5432/factory_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r backend/requirements.txt
+      - run: alembic upgrade head
+        working-directory: backend
+      - run: python -m unittest discover -s tests -v
+        working-directory: backend
+      - run: python -m compileall -q backend

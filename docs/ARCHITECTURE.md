@@ -17,3 +17,4 @@ Tenant isolation, authentication, audit trail, offline synchronization, event de
 
 ## DeepSeek Harness
 External agent orchestration candidate, not a dependency for initial operational path. Sandbox, pin, and test before deployment.
+
