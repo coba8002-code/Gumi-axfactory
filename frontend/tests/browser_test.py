@@ -27,6 +27,7 @@ try:
             r.fulfill(status=200,content_type="application/json",body=json.dumps(data))
         context.route("**/api/**",route)
         page=context.new_page()
+        page.on("pageerror",lambda e:print("BROWSER ERROR:",e,flush=True))
         page.goto(f"http://127.0.0.1:{server.server_port}")
         page.fill("#token","test-only-token");page.click("#login-form button")
         page.wait_for_selector("#workspace",state="visible")

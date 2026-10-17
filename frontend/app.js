@@ -52,6 +52,7 @@ async function records() {
 }
 async function sync() {
   if(busy||!user) return;
+  if(!navigator.onLine) {await queueView();message("오프라인입니다. 기록은 기기에 보관됩니다.");return;}
   busy=true;$("sync").disabled=true;
   const activeOwner=owner();
   try {
@@ -70,16 +71,20 @@ async function sync() {
 async function enter() {
   $("login").hidden=true;$("workspace").hidden=false;
   $("identity").textContent="공장 "+user.factory_id+" · "+user.role;
-  let equipment;
+  let equipment=JSON.parse(sessionStorage.getItem("equipment:"+owner())||"[]");
   if(navigator.onLine) {
-    equipment=await api("/equipment");
-    sessionStorage.setItem("equipment:"+owner(),JSON.stringify(equipment));
-  }else equipment=JSON.parse(sessionStorage.getItem("equipment:"+owner())||"[]");
+    try {
+      equipment=await api("/equipment");
+      sessionStorage.setItem("equipment:"+owner(),JSON.stringify(equipment));
+    }catch(e){message("설비 목록을 갱신하지 못했습니다. 저장된 목록과 대기 기록을 표시합니다.");}
+  }
   $("equipment").replaceChildren(...equipment.map(e=>new Option(e.name,e.id)));
   $("report-panel").hidden=!["supervisor","admin"].includes(user.role);
   if(!$("report-panel").hidden && navigator.onLine) {
-    const sensors=await api("/sensors");
-    $("report-sensor").replaceChildren(new Option("정지 기록만 집계",""),...sensors.map(s=>new Option(s.name,s.id)));
+    try {
+      const sensors=await api("/sensors");
+      $("report-sensor").replaceChildren(new Option("정지 기록만 집계",""),...sensors.map(s=>new Option(s.name,s.id)));
+    }catch(e){message("보고서 센서 목록을 갱신하지 못했습니다.");}
   }
   const local=new Date(Date.now()-new Date().getTimezoneOffset()*60000);
   $("started").value=local.toISOString().slice(0,16);
