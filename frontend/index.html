@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#163c39"><link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/style.css"><title>JUX · Factory AutoLog</title>
+</head>
+<body>
+<header><strong>JUX <span>Factory AutoLog</span></strong><span id="connection" role="status"></span></header>
+<main>
+  <section id="login"><p class="eyebrow">현장의 경험을 다음 작업으로</p><h1>오늘의 설비 기록</h1>
+    <p>관리자에게 발급받은 공장 전용 접속 토큰으로 시작하세요.</p>
+    <form id="login-form"><label>접속 토큰<input id="token" type="password" required autocomplete="off"></label><button>접속</button></form>
+  </section>
+  <section id="workspace" hidden>
+    <div class="bar"><h1>설비 정지 · 조치 기록</h1><button id="logout" class="secondary">로그아웃</button></div>
+    <p id="identity"></p><p id="message" role="status" aria-live="polite"></p>
+    <div class="grid">
+      <section class="card"><h2>현장 기록 작성</h2>
+        <form id="incident-form">
+          <label>설비<select id="equipment" required></select></label>
+          <label>정지 시작<input id="started" type="datetime-local" required></label>
+          <label>정지 사유<select id="reason"><option value="fault">고장</option><option value="tool">공구</option><option value="material">자재</option><option value="setup">셋업</option><option value="other">기타</option></select></label>
+          <label>상황 메모<textarea id="notes" maxlength="4000"></textarea></label>
+          <label>실행한 조치<textarea id="action" required maxlength="4000"></textarea></label>
+          <label>조치 결과<textarea id="outcome" required maxlength="4000"></textarea></label>
+          <p class="muted">사진·음성 파일 업로드는 후속 단계입니다. 민감한 개인 정보는 입력하지 마세요.</p>
+          <button>기록 저장</button>
+        </form>
+      </section>
+      <section class="card"><h2>전송 상태</h2><p>통신이 끊겨도 이 기기의 대기열에 저장됩니다. 재접속 후 전송하세요.</p>
+        <button id="sync" class="secondary">대기 기록 전송 / 새로고침</button><ul id="queue"></ul>
+        <h2>최근 기록 · 검토</h2><div id="incidents"></div>
+      </section>
+    </div>
+  </section>
+  <p id="error" role="alert"></p>
+</main><footer>JUX AX SENSE Base · 현장 검증용 MVP · 설비 제어 기능 없음</footer>
+<script type="module" src="/app.js"></script>
+</body></html>
