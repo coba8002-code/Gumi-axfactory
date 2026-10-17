@@ -203,3 +203,7 @@ def audit_log(user=Depends(principal)):
     with connect() as db:
         return db.execute("SELECT * FROM audit_events WHERE tenant_id=%s AND factory_id=%s ORDER BY id DESC LIMIT 200",
                           scope(user)).fetchall()
+
+
+from .telemetry import router as telemetry_router
+app.include_router(telemetry_router)
