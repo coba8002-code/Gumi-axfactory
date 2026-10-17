@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: factory
+      POSTGRES_USER: factory
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes: [factory-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U factory -d factory"]
+      interval: 5s
+      retries: 15
+  migrate:
+    build: ./backend
+    command: ["alembic","upgrade","head"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+    depends_on:
+      db: {condition: service_healthy}
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+  tablet:
+    build: ./frontend
+    ports: ["127.0.0.1:8080:8080"]
+    depends_on: [api]
+    restart: unless-stopped
+  reports:
+    build: ./backend
+    profiles: [automation]
+    command: ["python","-m","app.report_worker"]
+    environment:
+      REPORT_API_URL: http://api:8000
+      REPORT_TOKEN: ${REPORT_TOKEN:-}
+      REPORT_SENSOR_ID: ${REPORT_SENSOR_ID:-}
+    depends_on: [api]
+    restart: unless-stopped
+volumes:
+  factory-data:

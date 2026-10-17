@@ -9,7 +9,7 @@ from app.db import connect
 
 
 @unittest.skipUnless(os.getenv("DATABASE_URL"), "requires migrated PostgreSQL")
-class APITest(unittest.TestCase):
+class Fixture(unittest.TestCase):
     def setUp(self):
         self.client = TestClient(app)
         self.tenant, self.factory = uuid4(), uuid4()
@@ -35,6 +35,8 @@ class APITest(unittest.TestCase):
         self.assertEqual(response.status_code, 201, response.text)
         return response.json()["id"]
 
+
+class APITest(Fixture):
     def test_auth_scope(self):
         self.assertEqual(self.client.get("/equipment").status_code, 401)
         self.assertEqual(self.client.get("/equipment", headers=self.device).status_code, 403)

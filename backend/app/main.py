@@ -209,3 +209,5 @@ from .telemetry import router as telemetry_router
 app.include_router(telemetry_router)
 from .knowledge import router as knowledge_router
 app.include_router(knowledge_router)
+from .reports import router as reports_router
+app.include_router(reports_router)

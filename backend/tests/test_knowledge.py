@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone
-from test_api import APITest
+import test_api as support
 from app.knowledge import literal_pattern
 
 
@@ -9,7 +9,7 @@ class PatternTest(unittest.TestCase):
         self.assertEqual(literal_pattern("100%_"),"%100\\%\\_%")
 
 
-class KnowledgeTest(APITest):
+class KnowledgeTest(support.Fixture):
     def test_unapproved_and_other_factory_excluded(self):
         item=self.create()
         self.assertEqual(self.client.get("/knowledge?q=공구",headers=self.worker).json()["sources"],[])
