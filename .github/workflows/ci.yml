@@ -35,7 +35,7 @@ jobs:
           node-version: "22"
       - run: npm test
         working-directory: frontend
-      - run: pip install playwright==1.51.1
+      - run: pip install playwright==1.62.0
       - run: playwright install --with-deps chromium
       - run: python frontend/tests/browser_test.py
       - uses: actions/upload-artifact@v4

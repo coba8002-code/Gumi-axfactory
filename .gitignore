@@ -5,4 +5,7 @@ __pycache__/
 node_modules/
 dist/
 *.pyc
+*.sqlite3
+*.dump
+frontend/tests/tablet.png
 

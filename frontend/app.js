@@ -13,6 +13,14 @@ async function queueView() {
   $("queue").replaceChildren();
   for(const item of partition(await all(),owner())) {
     const li=document.createElement("li");li.textContent=(item.error?"확인 필요: ":"전송 대기: ")+item.incident.notes+" "+(item.error||"");
+    if(item.error) {
+      const discard=document.createElement("button");discard.textContent="이 대기 기록 삭제";
+      discard.onclick=async()=>{
+        if(confirm("기기에 남은 이 대기 기록을 삭제할까요? 서버에 이미 저장된 기록은 유지됩니다.")) {
+          await remove(item.id);await queueView();
+        }
+      };li.append(discard);
+    }
     $("queue").append(li);
   }
 }

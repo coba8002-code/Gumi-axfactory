@@ -1,4 +1,5 @@
 import hashlib
+import os
 from datetime import datetime, timezone
 from typing import Literal
 from uuid import UUID, uuid4
@@ -7,7 +8,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, ConfigDict, Field, AwareDatetime, model_validator
 from .db import connect
 
-app = FastAPI(title="JUX Factory Intelligence", version="0.2.0")
+app = FastAPI(title="JUX Factory Intelligence", version="0.2.0", root_path=os.getenv("ROOT_PATH",""))
 bearer = HTTPBearer(auto_error=False)
 
 
@@ -169,8 +170,10 @@ def add_action(item_id: UUID, body: ActionIn, user=Depends(principal)):
         if row["approved"]:
             raise HTTPException(409, "승인 기록은 변경할 수 없습니다")
         result = db.execute("""INSERT INTO corrective_actions(id,tenant_id,factory_id,incident_id,actor_id,action,outcome)
-            VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING *""",
+            VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING RETURNING *""",
             (body.id, *scope(user), item_id, user["id"], body.action, body.outcome)).fetchone()
+        if not result:
+            raise HTTPException(409, "조치 ID 충돌")
         audit(db, user, "incident.action_added", item_id)
         return result
 

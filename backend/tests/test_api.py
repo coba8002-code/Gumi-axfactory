@@ -37,6 +37,16 @@ class Fixture(unittest.TestCase):
 
 
 class APITest(Fixture):
+    def test_revoked_credentials_and_append_only_audit(self):
+        from psycopg import errors
+        identity=self.client.get("/me",headers=self.worker).json()["id"]
+        with connect() as db:
+            db.execute("UPDATE identities SET active=false WHERE id=%s",(identity,))
+        self.assertEqual(self.client.get("/equipment",headers=self.worker).status_code,401)
+        with self.assertRaises(errors.RaiseException):
+            with connect() as db:
+                db.execute("DELETE FROM audit_events WHERE tenant_id=%s AND factory_id=%s",(self.tenant,self.factory))
+
     def test_auth_scope(self):
         self.assertEqual(self.client.get("/equipment").status_code, 401)
         self.assertEqual(self.client.get("/equipment", headers=self.device).status_code, 403)

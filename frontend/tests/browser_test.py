@@ -33,6 +33,7 @@ try:
         page.evaluate("navigator.serviceWorker.ready")
         page.reload()
         page.wait_for_selector("#workspace",state="visible")
+        page.wait_for_function("document.querySelector('#equipment').options.length===1 && !document.querySelector('#sync').disabled")
         state["offline"]=True
         context.set_offline(True)
         page.fill("#notes","공구 마모 오프라인");page.fill("#action","공구 교체");page.fill("#outcome","재가동 확인")

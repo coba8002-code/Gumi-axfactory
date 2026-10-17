@@ -9,19 +9,35 @@
 - 관리자: 작업일지·정지시간·전력량 보고서
 - 공장/사용자별 데이터 격리, 감사기록 및 안전한 운영
 
+## Implemented pilot
+
+- PostgreSQL 16 + Alembic persistence, scoped bearer identities, worker/supervisor/admin/device RBAC.
+- Korean tablet PWA with durable IndexedDB queue and retry, separate reviewer approval, append-only audit.
+- Sensor/device registration, idempotent ingestion with unit/quality/provenance checks, read-only Modbus PC reference.
+- Approved-case retrieval with citations (retrieval PoC; no external LLM/embedding integration).
+- Immutable daily/monthly report snapshots, XLSX/PDF export, scheduled generation and labeled energy estimates.
+
+Start the full stack via [OPERATIONS.md](docs/OPERATIONS.md). The app is available on
+http://localhost:8080 after configuring environment credentials and provisioning identities.
+
 ## Local API quickstart
 ```bash
 cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+# Configure DATABASE_URL with your PostgreSQL connection first.
+alembic upgrade head
 uvicorn app.main:app --reload
 ```
 Windows: `.venv\Scripts\activate`.
 API docs: http://localhost:8000/docs
 
 ## Status
-초기 API 스캐폴드. 개발용 인메모리 저장소이며 실공장 운영 금지. 인증, PostgreSQL, 장비 연결, 자동 보고서, DeepSeek Harness는 후속 구현 필요.
+독립 파일럿 MVP입니다. 단계별 결과는 [docs/test-results](docs/test-results)에 기록합니다.
+실장비·ESP32 펌웨어, 사진/음성 업로드, 의미 기반 RAG·LLM, 검증된 에너지 절감,
+탄소 패스포트, 현장 보안·백업복구 인수는 후속 과제입니다.
+DeepSeek Harness 및 외부 JUX ERP·MES와 연결하거나 운영 배포하지 않았습니다.
 
 See [AGENTS.md](AGENTS.md) for Codex tasks and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design.
 
