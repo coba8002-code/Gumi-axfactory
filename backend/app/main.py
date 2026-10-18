@@ -214,3 +214,5 @@ from .knowledge import router as knowledge_router
 app.include_router(knowledge_router)
 from .reports import router as reports_router
 app.include_router(reports_router)
+from .management import router as management_router
+app.include_router(management_router)

@@ -52,7 +52,7 @@ def register_sensor(body: SensorIn, user=Depends(principal)):
         for table, item_id in [("equipment",body.equipment_id),("identities",body.device_id)]:
             row = db.execute(f"SELECT * FROM {table} WHERE tenant_id=%s AND factory_id=%s AND id=%s",
                              (*scope(user), item_id)).fetchone()
-            if not row or (table == "identities" and row["role"] != "device"):
+            if not row or (table == "identities" and (row["role"] != "device" or not row["active"])):
                 raise HTTPException(404, "설비 또는 장비 계정을 찾을 수 없습니다")
         row = db.execute("""INSERT INTO sensors(id,tenant_id,factory_id,equipment_id,device_id,name)
             VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING RETURNING *""",

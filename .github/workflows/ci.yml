@@ -47,6 +47,7 @@ jobs:
       - run: pip install playwright==1.62.0
       - run: playwright install --with-deps chromium
       - run: python frontend/tests/browser_test.py
+      - run: python frontend/tests/management_test.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

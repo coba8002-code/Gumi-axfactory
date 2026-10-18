@@ -15,6 +15,14 @@ Open http://localhost:8080. For tablets on a LAN, use an approved HTTPS reverse 
 and configure the port binding deliberately; default is loopback-only.
 Service workers require HTTPS except on localhost.
 
+PC control room: http://localhost:8080/management/ (admin/supervisor only).
+Overview polls every 30 seconds while visible. Freshness uses observed_at within 5 minutes,
+not equipment running/healthy status. Simulator, estimated and bad quality remain labeled.
+Trend API returns up to 240 latest readings for one sensor/metric without filling gaps.
+Admins can register equipment/sensors and deactivate same-factory accounts except themselves.
+Supervisors can inspect streams, review cases and generate reports, but cannot manage identities.
+Account creation/token rotation remains an operator CLI operation. No cross-factory switcher or machine controls.
+
 ## Provision
 
 Generate tenant/factory UUIDs. Provision distinct operator, supervisor, admin and device accounts:

@@ -10,4 +10,5 @@ dist/
 frontend/tests/tablet.png
 frontend/tests/desktop.png
 frontend/tests/mobile.png
+frontend/tests/management-*.png
 

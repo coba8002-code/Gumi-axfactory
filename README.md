@@ -13,6 +13,7 @@
 
 - PostgreSQL 16 + Alembic persistence, scoped bearer identities, worker/supervisor/admin/device RBAC.
 - Korean tablet PWA with durable IndexedDB queue and retry, separate reviewer approval, append-only audit.
+- Dedicated PC monitoring/admin site at /management/: sensor trends, freshness/quality, approval, inventory, reports, account revocation and audit.
 - Sensor/device registration, idempotent ingestion with unit/quality/provenance checks, read-only Modbus PC reference.
 - Approved-case retrieval with citations (retrieval PoC; no external LLM/embedding integration).
 - Immutable daily/monthly report snapshots, XLSX/PDF export, scheduled generation and labeled energy estimates.
