@@ -11,7 +11,10 @@ async function api(path,options={}) {
 }
 async function queueView() {
   $("queue").replaceChildren();
-  for(const item of partition(await all(),owner())) {
+  const pending=partition(await all(),owner());
+  $("queue-count").textContent=pending.length;
+  $("queue-empty").hidden=pending.length!==0;
+  for(const item of pending) {
     const li=document.createElement("li");li.textContent=(item.error?"확인 필요: ":"전송 대기: ")+item.incident.notes+" "+(item.error||"");
     if(item.error) {
       const discard=document.createElement("button");discard.textContent="이 대기 기록 삭제";
@@ -26,11 +29,26 @@ async function queueView() {
 }
 async function records() {
   const rows=await api("/incidents");
+  $("review-count").textContent=rows.filter(row=>!row.approved).length;
   $("incidents").replaceChildren();
+  if(!rows.length) {
+    const empty=document.createElement("div");empty.className="empty-state";
+    const icon=document.createElement("span");icon.textContent="▤";icon.setAttribute("aria-hidden","true");
+    const title=document.createElement("strong");title.textContent="아직 등록된 기록이 없습니다";
+    const detail=document.createElement("p");detail.textContent="첫 현장 기록을 남겨보세요.\n저장한 기록을 이곳에서 확인할 수 있습니다.";
+    empty.append(icon,title,detail);$("incidents").append(empty);
+  }
   for(const row of rows) {
     const article=document.createElement("article"), text=document.createElement("p");
-    text.textContent=(row.approved?"승인 완료":"검토 대기")+" · "+new Date(row.started_at).toLocaleString()+" · "+row.notes;
-    article.append(text);
+    const meta=document.createElement("div");meta.className="activity-meta";
+    const badge=document.createElement("span");badge.className="badge "+(row.approved?"approved-badge":"pending-badge");
+    badge.textContent=row.approved?"승인 완료":"검토 대기";
+    const time=document.createElement("time");time.dateTime=row.started_at;
+    time.textContent=new Date(row.started_at).toLocaleString("ko-KR",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
+    meta.append(badge,time);text.className="activity-title";text.textContent=row.notes||"상황 메모 없이 등록된 기록";
+    const equipment=document.createElement("p");equipment.className="activity-equipment";
+    equipment.textContent=Array.from($("equipment").options).find(o=>o.value===row.equipment_id)?.textContent||"설비 기록";
+    article.append(meta,text,equipment);
     if(!row.approved && ["supervisor","admin"].includes(user.role)) {
       const button=document.createElement("button");button.textContent="조치 확인 및 승인";
       button.onclick=async()=>{
@@ -70,7 +88,10 @@ async function sync() {
 }
 async function enter() {
   $("login").hidden=true;$("workspace").hidden=false;
-  $("identity").textContent="공장 "+user.factory_id+" · "+user.role;
+  $("navigation").hidden=false;
+  $("review-count").textContent="—";$("incidents").replaceChildren();
+  $("role-label").textContent=({worker:"작업자",supervisor:"검토자",admin:"관리자"})[user.role]||user.role;
+  $("identity").textContent="공장 ID · "+user.factory_id;
   let equipment=JSON.parse(sessionStorage.getItem("equipment:"+owner())||"[]");
   if(navigator.onLine) {
     try {
@@ -79,7 +100,9 @@ async function enter() {
     }catch(e){message("설비 목록을 갱신하지 못했습니다. 저장된 목록과 대기 기록을 표시합니다.");}
   }
   $("equipment").replaceChildren(...equipment.map(e=>new Option(e.name,e.id)));
+  $("equipment-count").textContent=equipment.length;
   $("report-panel").hidden=!["supervisor","admin"].includes(user.role);
+  $("report-nav").hidden=$("report-panel").hidden;
   if(!$("report-panel").hidden && navigator.onLine) {
     try {
       const sensors=await api("/sensors");
@@ -101,6 +124,9 @@ $("logout").onclick=()=>{
   $("incidents").replaceChildren();$("queue").replaceChildren();$("incident-form").reset();
   $("knowledge-results").replaceChildren();$("report-result").replaceChildren();
   $("workspace").hidden=true;$("login").hidden=false;
+  $("navigation").hidden=true;
+  ["equipment-count","review-count","queue-count"].forEach(id=>$(id).textContent="—");
+  $("message").textContent="";$("error").textContent="";
 };
 $("incident-form").onsubmit=async e=>{
   e.preventDefault();
@@ -157,7 +183,13 @@ $("report-form").onsubmit=async e=>{
     }
   }catch(e){error(e);}
 };
-function connectivity() {$("connection").textContent=navigator.onLine?"온라인":"오프라인 · 기기 저장";}
+function connectivity() {
+  $("connection").textContent=navigator.onLine?"네트워크 연결됨":"오프라인 · 기기 저장";
+  $("connection").classList.toggle("offline",!navigator.onLine);
+}
+document.querySelectorAll(".nav-item").forEach(link=>link.addEventListener("click",()=>{
+  document.querySelectorAll(".nav-item").forEach(item=>item.classList.toggle("active",item===link));
+}));
 window.addEventListener("online",()=>{connectivity();sync();});window.addEventListener("offline",connectivity);connectivity();
 try {const saved=JSON.parse(sessionStorage.getItem("login")||"null");if(saved){user=saved.user;token=saved.token;await enter();}}catch(e){error(e);}
 if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(error);

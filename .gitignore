@@ -8,4 +8,6 @@ dist/
 *.sqlite3
 *.dump
 frontend/tests/tablet.png
+frontend/tests/desktop.png
+frontend/tests/mobile.png
 

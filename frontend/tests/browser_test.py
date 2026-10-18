@@ -35,11 +35,18 @@ try:
         page.reload()
         page.wait_for_selector("#workspace",state="visible")
         page.wait_for_function("document.querySelector('#equipment').options.length===1 && !document.querySelector('#sync').disabled")
+        assert page.locator("#equipment-count").inner_text()=="1"
+        assert page.locator("#review-count").inner_text()=="0"
+        for width,height,name in [(1440,1100,"desktop"),(390,844,"mobile"),(1024,1366,"tablet")]:
+            page.set_viewport_size({"width":width,"height":height})
+            assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"),name+" has horizontal overflow"
+            page.screenshot(path=str(root/"tests"/(name+".png")),full_page=True)
         state["offline"]=True
         context.set_offline(True)
         page.fill("#notes","공구 마모 오프라인");page.fill("#action","공구 교체");page.fill("#outcome","재가동 확인")
         page.click("#incident-form button")
         page.wait_for_function("document.querySelector('#queue').children.length===1")
+        assert page.locator("#queue-count").inner_text()=="1"
         # Durable record survives page reload; shell is served by the service worker.
         page.reload()
         page.wait_for_selector("#workspace",state="visible")

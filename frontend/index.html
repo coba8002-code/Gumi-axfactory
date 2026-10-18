@@ -1,53 +1,61 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#163c39"><link rel="manifest" href="/manifest.webmanifest">
-  <link rel="stylesheet" href="/style.css"><title>JUX · Factory AutoLog</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101d32"><link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/style.css"><title>JUX · Factory Intelligence</title>
 </head>
 <body>
-<header><strong>JUX <span>Factory AutoLog</span></strong><span id="connection" role="status"></span></header>
-<main>
-  <section id="login"><p class="eyebrow">현장의 경험을 다음 작업으로</p><h1>오늘의 설비 기록</h1>
-    <p>관리자에게 발급받은 공장 전용 접속 토큰으로 시작하세요.</p>
-    <form id="login-form"><label>접속 토큰<input id="token" type="password" required autocomplete="off"></label><button>접속</button></form>
-  </section>
-  <section id="workspace" hidden>
-    <div class="bar"><h1>설비 정지 · 조치 기록</h1><button id="logout" class="secondary">로그아웃</button></div>
-    <p id="identity"></p><p id="message" role="status" aria-live="polite"></p>
-    <div class="grid">
-      <section class="card"><h2>현장 기록 작성</h2>
-        <form id="incident-form">
-          <label>설비<select id="equipment" required></select></label>
-          <label>정지 시작<input id="started" type="datetime-local" required></label>
-          <label>정지 사유<select id="reason"><option value="fault">고장</option><option value="tool">공구</option><option value="material">자재</option><option value="setup">셋업</option><option value="other">기타</option></select></label>
-          <label>상황 메모<textarea id="notes" maxlength="4000"></textarea></label>
-          <label>실행한 조치<textarea id="action" required maxlength="4000"></textarea></label>
-          <label>조치 결과<textarea id="outcome" required maxlength="4000"></textarea></label>
-          <p class="muted">사진·음성 파일 업로드는 후속 단계입니다. 민감한 개인 정보는 입력하지 마세요.</p>
-          <button>기록 저장</button>
-        </form>
-      </section>
-      <section class="card"><h2>전송 상태</h2><p>통신이 끊겨도 이 기기의 대기열에 저장됩니다. 재접속 후 전송하세요.</p>
-        <button id="sync" class="secondary">대기 기록 전송 / 새로고침</button><ul id="queue"></ul>
-        <h2>최근 기록 · 검토</h2><div id="incidents"></div>
-      </section>
+<a class="skip-link" href="#main">본문으로 이동</a>
+<aside class="sidebar">
+  <a class="brand" href="#main" aria-label="JUX Factory Intelligence 홈"><span class="brand-mark">J<span>U</span>X<span class="brand-dot">.</span></span><span class="brand-caption">FACTORY INTELLIGENCE</span></a>
+  <div class="site-label"><span class="site-symbol" aria-hidden="true">▥</span><div>Factory AutoLog<small>현장 운영 워크스페이스</small></div></div>
+  <nav id="navigation" aria-label="주요 메뉴" hidden>
+    <span class="nav-label">WORKSPACE</span>
+    <a class="nav-item active" href="#workspace"><span aria-hidden="true">▦</span>현장 기록<span class="nav-indicator"></span></a>
+    <a class="nav-item" href="#activity-panel"><span aria-hidden="true">◷</span>기록 · 승인</a>
+    <a class="nav-item" href="#knowledge-panel"><span aria-hidden="true">◇</span>현장 지식</a>
+    <a class="nav-item" id="report-nav" href="#report-panel" hidden><span aria-hidden="true">▤</span>공장 보고서</a>
+  </nav>
+  <div class="sidebar-note"><span class="note-mark" aria-hidden="true">↗</span><strong>현장의 기록이<br>공장의 지식으로.</strong><p>기록하고, 확인하고,<br>다음 작업에 활용하세요.</p></div>
+  <div class="sidebar-bottom"><span class="pilot-dot"></span> AX SENSE Base <span class="pilot-label">PILOT</span></div>
+</aside>
+<div class="app-shell">
+<header class="topbar"><div class="breadcrumb">워크스페이스 <span>/</span> <strong>Factory AutoLog</strong></div><div class="topbar-right"><span id="connection" role="status" class="connection"></span><span class="avatar" aria-hidden="true">J</span></div></header>
+<main id="main">
+<section id="login" class="login-layout">
+  <div class="login-story"><div class="eyebrow">JUX FACTORY INTELLIGENCE</div><h1>현장을 기록하고,<br>더 나은 내일을<br><em>만듭니다.</em></h1><p>설비의 작은 변화부터 작업자의 경험까지.<br>우리 공장의 기록을 한곳에 모으세요.</p><div class="workflow-visual" aria-label="기록, 검토, 지식으로 이어지는 업무 흐름"><span><b>01</b>현장 기록</span><i>→</i><span><b>02</b>검토 · 승인</span><i>→</i><span><b>03</b>지식 축적</span></div><div class="story-caption"><span></span>현장과 데이터를 연결하는 새로운 작업 방식</div></div>
+  <div class="login-card"><span class="login-icon" aria-hidden="true">▥</span><h2>우리 공장에 접속하기</h2><p>관리자에게 발급받은 공장 전용 접속 토큰을 입력하세요.</p><form id="login-form"><label for="token">접속 토큰</label><input id="token" type="password" required autocomplete="off" placeholder="공장 전용 토큰 입력"><button type="submit">워크스페이스 시작 <span aria-hidden="true">→</span></button></form><div class="login-hint"><span aria-hidden="true">◈</span>공장별로 분리된 공간에서 안전하게 기록합니다.</div></div>
+</section>
+<section id="workspace" hidden>
+  <div class="page-heading"><div><p class="eyebrow">FACTORY AUTOLOG</p><h1>오늘의 현장 기록<span class="heading-dot">.</span></h1><p class="page-description">작은 변화도 놓치지 않도록, 현장의 경험을 기록하세요.</p></div><div class="heading-actions"><span id="role-label" class="role-label"></span><button id="logout" class="text-button">로그아웃 <span aria-hidden="true">↗</span></button></div></div>
+  <p id="identity" class="identity"></p>
+  <div class="summary-grid" aria-label="작업 현황">
+    <div class="summary-card"><span class="metric-icon blue" aria-hidden="true">▥</span><div><span class="metric-label">등록 설비</span><div class="metric-value"><strong id="equipment-count">—</strong><span>대</span></div></div><span class="metric-caption">접속 공장 기준</span></div>
+    <div class="summary-card"><span class="metric-icon amber" aria-hidden="true">◷</span><div><span class="metric-label">검토 대기</span><div class="metric-value"><strong id="review-count">—</strong><span>건</span></div></div><span class="metric-caption">최근 조회 기록 기준</span></div>
+    <div class="summary-card"><span class="metric-icon teal" aria-hidden="true">↥</span><div><span class="metric-label">이 기기의 전송 대기</span><div class="metric-value"><strong id="queue-count">—</strong><span>건</span></div></div><span class="metric-caption">현재 사용자 기준</span></div>
+  </div>
+  <p id="message" class="notice" role="status" aria-live="polite"></p>
+  <div class="work-grid">
+    <section class="card entry-card"><div class="card-header"><div><span class="section-kicker">NEW RECORD</span><h2>정지 · 조치 기록</h2></div><span class="badge neutral">현장 입력</span></div>
+      <form id="incident-form">
+        <div class="form-section"><h3><span>01</span>설비와 시간</h3><div class="field-grid"><label>설비 선택<select id="equipment" required></select></label><label>정지 시작 시각<input id="started" type="datetime-local" required></label></div></div>
+        <div class="form-section"><h3><span>02</span>어떤 상황인가요?</h3><label>정지 사유<select id="reason"><option value="fault">설비 고장</option><option value="tool">공구 교체 · 이상</option><option value="material">자재 대기 · 이상</option><option value="setup">작업 셋업</option><option value="other">기타</option></select></label><label>상황 메모 <span class="optional">선택</span><textarea id="notes" maxlength="4000" placeholder="예: 가공 중 평소와 다른 소음이 발생했습니다."></textarea></label></div>
+        <div class="form-section"><h3><span>03</span>조치와 결과를 남겨주세요</h3><label>실행한 조치<textarea id="action" required maxlength="4000" placeholder="어떤 점검이나 조치를 했나요?"></textarea></label><label>조치 결과<textarea id="outcome" required maxlength="4000" placeholder="조치 후 설비 상태와 확인한 내용을 입력하세요."></textarea></label></div>
+        <div class="form-bottom"><p><span aria-hidden="true">◈</span>오프라인에서도 이 기기에 기록이 저장됩니다.</p><button type="submit">기록 저장하기 <span aria-hidden="true">→</span></button></div>
+      </form>
+    </section>
+    <div class="right-column">
+      <section class="card sync-card"><div class="card-header"><div><span class="section-kicker">SYNC STATUS</span><h2>기록 전송 상태</h2></div><span class="small-icon" aria-hidden="true">↥</span></div><div class="sync-description"><span class="sync-symbol" aria-hidden="true">⇄</span><div><strong>현장에서는 기록에 집중하세요</strong><p>연결이 끊겨도 기록은 보관됩니다.<br>네트워크가 돌아오면 다시 전송합니다.</p></div></div><ul id="queue" class="queue-list"></ul><p id="queue-empty" class="empty-inline" hidden>전송을 기다리는 기록이 없습니다.</p><button id="sync" class="secondary">↻ &nbsp; 전송 및 새로고침</button></section>
+      <section class="card activity-card" id="activity-panel"><div class="card-header"><div><span class="section-kicker">RECENT ACTIVITY</span><h2>최근 기록 · 검토</h2></div><span class="badge neutral">최근 200건</span></div><div id="incidents" class="activity-list"></div></section>
+      <div class="tip-card"><span class="tip-icon" aria-hidden="true">✧</span><div><strong>좋은 기록은 다음 작업의 길잡이</strong><p>증상, 실행한 조치, 조치 후 결과를 구체적으로 남겨주세요. 검토자가 승인한 사례는 현장 지식으로 활용됩니다.</p></div></div>
     </div>
-    <section class="card"><h2>승인된 현장 사례 검색</h2>
-      <form id="knowledge-form"><label>증상·조치 키워드<input id="query" minlength="2" maxlength="200" required></label><button>근거 검색</button></form>
-      <div id="knowledge-results"></div>
-    </section>
-    <section class="card" id="report-panel" hidden><h2>공장 일·월간 보고서</h2>
-      <p>완료된 기간을 선택하세요. 전력계 하나를 기준으로 집계하며 메인·분기 계측값을 합산하지 않습니다.</p>
-      <form id="report-form">
-        <label>기간<select id="period"><option value="daily">일간</option><option value="monthly">월간 (해당 월 1일 선택)</option></select></label>
-        <label>기준일<input id="report-day" type="date" required></label>
-        <label>전력계<select id="report-sensor"><option value="">정지 기록만 집계</option></select></label>
-        <button>보고서 생성 · 조회</button>
-      </form><div id="report-result"></div>
-    </section>
-  </section>
-  <p id="error" role="alert"></p>
-</main><footer>JUX AX SENSE Base · 현장 검증용 MVP · 설비 제어 기능 없음</footer>
-<script type="module" src="/app.js"></script>
+  </div>
+  <section class="card knowledge-card" id="knowledge-panel"><div class="card-header"><div><span class="section-kicker">FACTORY KNOWLEDGE</span><h2>우리 공장의 해결 경험을 찾아보세요</h2><p>승인된 과거 사례에서 조치와 근거를 확인합니다.</p></div><span class="knowledge-symbol" aria-hidden="true">◇</span></div><form id="knowledge-form" class="search-form"><label class="sr-only" for="query">증상·조치 키워드</label><div class="search-field"><span aria-hidden="true">⌕</span><input id="query" minlength="2" maxlength="200" required placeholder="증상이나 조치를 검색하세요. 예: 공구 교체"></div><button>근거 검색 <span aria-hidden="true">→</span></button></form><div id="knowledge-results"></div></section>
+  <section class="card" id="report-panel" hidden><div class="card-header"><div><span class="section-kicker">FACTORY REPORTS</span><h2>기록을 한 장의 보고서로</h2><p>완료된 일·월을 선택하세요. 전력계별 실측과 추정치를 구분합니다.</p></div><span class="badge blue-badge">관리자 · 검토자</span></div><form id="report-form" class="report-form"><label>집계 기간<select id="period"><option value="daily">일간 보고서</option><option value="monthly">월간 보고서 · 해당 월 1일</option></select></label><label>기준일<input id="report-day" type="date" required></label><label>기준 전력계<select id="report-sensor"><option value="">정지 기록만 집계</option></select></label><button>보고서 생성 · 조회</button></form><div id="report-result"></div></section>
+</section>
+<p id="error" role="alert" class="error-notice"></p>
+<footer><span><strong>JUX</strong> Factory Intelligence</span><span>현장 기록에서 시작되는 더 나은 운영</span></footer>
+</main>
+</div><script type="module" src="/app.js"></script>
 </body></html>

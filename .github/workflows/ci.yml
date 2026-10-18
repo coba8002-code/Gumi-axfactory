@@ -51,4 +51,4 @@ jobs:
         if: always()
         with:
           name: tablet-preview
-          path: frontend/tests/tablet.png
+          path: frontend/tests/*.png
